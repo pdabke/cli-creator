@@ -134,9 +134,10 @@ class CLIModule {
       if (cInfo.comment) cmd.description(cInfo.comment);
       let argFuncs = addArgs(cmd, cInfo.params);
       let argNames = cInfo.params.map((p) => { return p.name; });
+      let optFuncs = {};
       if (cInfo.options) {
         let optStrs = constructOptionFlags(cInfo.options);
-        addOptions(cmd, cInfo.options, optStrs);
+        optFuncs = addOptions(cmd, cInfo.options, optStrs);
       }
       
       // Need to use an intermediate function to ensure correct "this"
@@ -161,6 +162,10 @@ class CLIModule {
             }
           }
           // Push options
+          let opts = args[args.length - 2];
+          Object.keys(opts).forEach((key) => {
+            opts[key] = optFuncs[key]["func"](opts[key], optFuncs[key]["name"])
+          });
           typedCmdArgs.push(args[args.length-2]);
           if (cInfo.isAsync) response = await provider[cInfo.name](...typedCmdArgs);
           else response = provider[cInfo.name](...typedCmdArgs);
@@ -226,7 +231,11 @@ function addArgs(cmd, params) {
     arg.required = param.isOptional ? false : true;
     let argFunc = ARG_PARSERS[param.type];
     if (!argFunc) argFunc = ARG_PARSERS["any"];
+    // We are not overriding the argParser because then it loses
+    // built in check for choices and processing of variadic options
+    // Instead we do the type conversion at the execution time
     // arg.argParser(argFunc);
+
     argFuncs.push(argFunc);
     cmd.addArgument(arg);
   }
@@ -234,6 +243,7 @@ function addArgs(cmd, params) {
 }
 
 function addOptions(cmd, opts, optFlags) {
+  let argFuncs = {};
   for (let i = 0; i < opts.length; i++) {
     let opt = opts[i];
     let optStr = null;
@@ -251,11 +261,15 @@ function addOptions(cmd, opts, optFlags) {
     if (opt.default) arg.default(opt.default);
     let argFunc = ARG_PARSERS[opt.type];
     if (!argFunc) argFunc = ARG_PARSERS["any"];
-    arg.argParser(argFunc);
+    // We are not overriding the argParser because then it loses
+    // built in check for choices and processing of variadic options
+    // Instead we do the type conversion at the execution time
+    // arg.argParser(argFunc);
 
     cmd.addOption(arg);
+    argFuncs[arg.attributeName()] = { name: optFlags[i], func: argFunc};
   }
-
+  return argFuncs;
 }
 
 
