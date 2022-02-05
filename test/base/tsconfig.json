@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist/dist-cjs",
+    "removeComments": true,
+    "module": "commonjs",
+    "incremental": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "ES2018",
+    "sourceMap": true
+  },
+  "exclude": ["test/**/*"]
+}

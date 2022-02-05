@@ -1,0 +1,12 @@
+{
+  "name": "i-hello",
+  "packagePath": "./base",
+  "version": "1.0.0",
+  "providerType": "IHello",
+  "methods": [
+    {
+      "name": "sayHello",
+      "params": []
+    }
+  ]
+}

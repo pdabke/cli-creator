@@ -1,0 +1,14 @@
+{
+  "name": "base",
+  "version": "1.0.0",
+  "description": "Test base package",
+  "main": "./dist/dist-cjs/Base.js",
+  "types": "./dist/dist-types/Base.d.ts",
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:types",
+    "build:cjs": "tsc -p tsconfig.json",
+    "build:types": "tsc -p tsconfig.types.json"
+  },
+  "author": "Padmanabh Dabke",
+  "license": "MIT"
+}

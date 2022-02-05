@@ -1,0 +1,85 @@
+{
+  "name": "pizza-shop",
+  "packagePath": "./pizza_shop",
+  "version": "1.0.0",
+  "providerType": "PizzaShop",
+  "methods": [
+    {
+      "name": "cancelOrder",
+      "params": [
+        {
+          "name": "id",
+          "comment": "Order ID",
+          "type": "number"
+        },
+        {
+          "name": "name",
+          "comment": "Customer name associated with the order",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "listOrders",
+      "comment": "List current orders",
+      "params": []
+    },
+    {
+      "name": "placeOrder",
+      "comment": "Place a new order",
+      "options": [
+        {
+          "name": "orderType",
+          "isOptional": true,
+          "type": "string",
+          "choices": [
+            "dine-in",
+            "pickup",
+            "delivery"
+          ]
+        },
+        {
+          "name": "thickCrust",
+          "comment": "Indicates if you want thick crust pizza",
+          "isOptional": true,
+          "type": "boolean"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "phone",
+          "type": "number"
+        }
+      ],
+      "params": [
+        {
+          "name": "customerName",
+          "comment": "Customer name",
+          "type": "string"
+        },
+        {
+          "name": "pizzaType",
+          "comment": "Type of pizza",
+          "type": "string",
+          "choices": [
+            "cheese",
+            "pepperoni"
+          ]
+        },
+        {
+          "name": "quantity",
+          "isOptional": true,
+          "comment": "Number of pizzas. Default is 1",
+          "type": "number"
+        }
+      ]
+    }
+  ],
+  "comment": "Pizza order management"
+}

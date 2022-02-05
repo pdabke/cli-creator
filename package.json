@@ -1,0 +1,37 @@
+{
+  "name": "@nabh/cli-creator",
+  "version": "1.0.0",
+  "description": "Easily create Command Line Interface from Typescript classes and interfaces",
+  "main": "src/index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "lint": "npx eslint --fix src/**",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pdabke/cli-generator.git"
+  },
+  "keywords": [
+    "CLI",
+    "Typescript"
+  ],
+  "author": "Padmanabh Dabke",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pdabke/cli-generator/issues"
+  },
+  "homepage": "https://github.com/pdabke/cli-generator#readme",
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "jest": "^27.4.7"
+  },
+  "dependencies": {
+    "@nabh/ts-api-extractor": "^1.1.2",
+    "commander": "^8.3.0",
+    "readline-sync": "^1.4.10"
+  }
+}
