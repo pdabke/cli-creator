@@ -29,7 +29,7 @@
     "jest": "^27.4.7"
   },
   "dependencies": {
-    "@nabh/ts-api-extractor": "^1.1.2",
+    "@nabh/ts-api-extractor": "^1.1.4",
     "commander": "^8.3.0",
     "readline-sync": "^1.4.10"
   }
