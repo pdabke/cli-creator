@@ -46,10 +46,6 @@ function createModuleConfig(pkgNameOrPath, typeName, options) {
 }
 
 function setType(pInfo, ty, packageMap, pkg, basePkg) {
-  if (ty == "string" || ty == "boolean" || ty == "number" || ty == "Stream" || ty == "Buffer" || ty == "Date") {
-    pInfo.type = ty;
-    return;
-  }
 
   if (ty.includes("|")) {
     let types = ty.split("|");
@@ -62,6 +58,11 @@ function setType(pInfo, ty, packageMap, pkg, basePkg) {
 
     }
     ty = types[0];
+  }
+
+  if (!pkg) {
+    pInfo.type = ty;
+    return;
   }
 
   pInfo.type = ty;
