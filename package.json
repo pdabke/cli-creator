@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "Easily create Command Line Interface from Typescript classes and interfaces",
   "main": "src/index.js",
-  "directories": {
-    "doc": "docs",
-    "test": "test"
+  "bin": {
+    "cli-creator": "bin/cli_creator.js"
   },
   "scripts": {
     "lint": "npx eslint --fix src/**",

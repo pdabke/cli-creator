@@ -108,4 +108,19 @@ test("Multi module CLI: Shell invocation with option", () => {
   expect(resp).toEqual("\"Hello Universe\"");
 });
 
+test("CLI-Creator global script: Multi module", () => {
+  let resp = execSync("node " + path.resolve("..", "bin", "cl_creator.js") +
+    " create-multi-config -V 2.0.0 baboon cli_test_input.json");
+  resp = JSON.parse(resp.toString().trim());
+  let expected = JSON.parse(fs.readFileSync("cli_test_multi.json"));
+  expect(expected).toEqual(resp);
+});
+
+test("CLI-Creator global script: Single module", () => {
+  let resp = execSync("node " + path.resolve("..", "bin", "cl_creator.js") +
+    " create-config -V 2.0.0 --name hello ./base IHello");
+  resp = JSON.parse(resp.toString().trim());
+  let expected = JSON.parse(fs.readFileSync("cli_test_base.json"));
+  expect(expected).toEqual(resp);
+});
 

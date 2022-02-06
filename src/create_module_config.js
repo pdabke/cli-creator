@@ -16,7 +16,7 @@ function createModuleConfig(pkgNameOrPath, typeName, options) {
   config.name = options?.name ? options.name : camelCaseToDash(typeName);
   config.packageName = pkgInfo.package.package;
   if (fs.existsSync(pkgNameOrPath)) config.packagePath = pkgNameOrPath;
-  config.version = options?.version ? options.version : pkgInfo.package.version;
+  config.version = options?.versionString ? options.versionString : pkgInfo.package.version;
   config.providerType = typeName;
   let methods = [];
   config.methods = methods;

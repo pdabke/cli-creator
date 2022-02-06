@@ -1,0 +1,4 @@
+[
+  {"package": "./base", "type": "IHello"},
+  {"package": "./pizza_shop", "type": "PizzaShop"}
+]

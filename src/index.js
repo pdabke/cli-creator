@@ -8,19 +8,20 @@ const createModuleConfig = require("../src/create_module_config");
 const CLICreator = {
   createModuleConfig(pkgNameOrPath, providerType, options) {
     let config = createModuleConfig(pkgNameOrPath, providerType, options);
-    if (options?.out) fs.writeFileSync(options.out, JSON.stringify(config, null, 2));
+    if (options?.save) fs.writeFileSync(options.save, JSON.stringify(config, null, 2));
     return config;
   },
 
-  createMultiModuleConfig(name, moduleSpecs, outputFile) {
+  createMultiModuleConfig(name, moduleSpecs, options) {
     let mmConfig = {name: name};
+    if (options?.versionString) mmConfig.version = options.versionString;
     let configs = [];
     mmConfig.modules = configs;
     for (const modSpec of moduleSpecs) {
       configs.push(createModuleConfig(modSpec.package, modSpec.type, modSpec.options));
     }
-    if (outputFile) {
-      fs.writeFileSync(outputFile, JSON.stringify(mmConfig, null, 2));
+    if (options?.save) {
+      fs.writeFileSync(options.save, JSON.stringify(mmConfig, null, 2));
     }
     return mmConfig;
   },

@@ -1,0 +1,12 @@
+{
+  "name": "hello",
+  "packagePath": "./base",
+  "version": "2.0.0",
+  "providerType": "IHello",
+  "methods": [
+    {
+      "name": "sayHello",
+      "params": []
+    }
+  ]
+}
