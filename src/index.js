@@ -12,12 +12,13 @@ const CLICreator = {
     return config;
   },
 
-  createMultiModuleConfig(name, moduleSpecs, options) {
-    let mmConfig = {name: name};
+  createMultiModuleConfig(moduleSpecs, options) {
+    let mmConfig = {name: moduleSpecs.name, version: moduleSpecs.version};
+    if (options?.name) mmConfig.name = options.name;
     if (options?.versionString) mmConfig.version = options.versionString;
     let configs = [];
     mmConfig.modules = configs;
-    for (const modSpec of moduleSpecs) {
+    for (const modSpec of moduleSpecs.modules) {
       configs.push(createModuleConfig(modSpec.package, modSpec.type, modSpec.options));
     }
     if (options?.save) {

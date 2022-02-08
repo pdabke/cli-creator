@@ -1,5 +1,5 @@
 # cli-creator
-Typescript libraries often provide a command line interface (CLI) to enable interactive use of their API. For example, AWS offers an SDK as well aws-cli, a command line tool to interact with cloud resources. Keeping the CLI in synch with the underlying APIs is time consuming and highly error prone process. `cli-creator` automates this process. With just a few lines of code, `cli-creator` can create a CLI that maps class or interface methods into CLI commands.
+Typescript libraries often provide a command line interface (CLI) to enable interactive use of their API. For example, AWS offers an SDK as well aws-cli, a command line tool to interact with cloud resources. Keeping the CLI in sync with the underlying APIs is time consuming and highly error prone process. `cli-creator` automates this process by generating CLI commands from Typescript interface or class type definition. This allows developers to keep their CLI in sync with the API changes by simply rebuilding the CLI code without any coding changes.
 ## Usage
 Install globally or locally
 ```
@@ -7,30 +7,31 @@ npm i [-g] @nabh/cli-creator
 ```
 ### Command Line Usage
 If you install `cli-extractor` globally, you can use `cli-extractor` CLI to create configuration files needed to convert your Typescript classes/interfaces into a CLI
-```
+```shell
 > cli-creator --help
 Usage: cli_creator [options] [command]
 
 Options:
-  -h, --help                                                display help for command
+  -h, --help                                display help for command
 
 Commands:
-  create-config [options] <package> <type>                  Create a config file for a single module CLI
-  create-multi-config [options] <name> <input-config-file>  Create a config file for a multiple module CLI
-  help [command]                                            display help for command
-
+  create-config [options] [package] [type]  Create a config file that maps Typescript classes/interfaces to CLI commands.
+  help [command]                            display help for command
+```
+```
 > cli-creator create-config --help
-Usage: cli_creator create-config [options] <package> <type>
+Usage: cli_creator create-config [options] [package] [type]
 
-Create a config file for a single module CLI
+Create a config file that maps Typescript classes/interfaces to CLI commands.
 
 Arguments:
   package                           Name or root directory of a package
   type                              Class or interface that specifies signatures for CLI commands.
 
 Options:
-  -n, --name <file-name>            Command/prompt name of the CLI. The name is used in the help messages
+  -n, --name <cli-name>             Command/prompt name of the CLI
   -V, --version-string <file-name>  Version displayed for the generated CLI
+  -i, --input <mapping-file>        JSON file that specifies Typescript types to be mapped to CLI commands
   -s, --save <file-name>            Path where the configuration will be saved.
   -h, --help                        display help for command
 
@@ -71,7 +72,7 @@ export class PizzaShop {
     /* Implementation code here */
   }
 }
-
+```
 
 ### Install `cli-creator` locally
 Install `cli-creator` in your CLI package
@@ -84,7 +85,7 @@ Add the following line in the `script` section of the `package.json` file
 ```json
 {
   "scripts": {
-    "create-cli-config": cli-creator create-config test pizza-shop -s cli-config.json
+    "create-cli-config": "cli-creator create-config -s cli-config.json test pizza-shop"
   }
 }
 ```
@@ -122,7 +123,7 @@ Commands:
   place-order [options] <customer-name> <pizza-type> [quantity]  Place a new order
   help [command]                                                 display help for command
 
->node cli place-order bob cheese
+> node cli place-order bob cheese
 {
   "status": "placed",
   "id": 0,

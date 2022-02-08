@@ -1,4 +1,14 @@
-[
-  {"package": "./base", "type": "IHello"},
-  {"package": "./pizza_shop", "type": "PizzaShop"}
-]
+{
+  "name": "cli-creator-test",
+  "version": "2.0.0",
+  "modules": [
+    {
+      "package": "./base",
+      "type": "IHello"
+    },
+    {
+      "package": "./pizza_shop",
+      "type": "PizzaShop"
+    }
+  ]
+}
