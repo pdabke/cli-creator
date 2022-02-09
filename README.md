@@ -15,7 +15,7 @@ Options:
   -h, --help                                display help for command
 
 Commands:
-  create-config [options] [package] [type]  Create a config file that maps Typescript classes/interfaces to CLI commands.
+  create-config [options] [package] [type]  Create a config file that maps Typescript types to CLI commands.
   help [command]                            display help for command
 ```
 ```
