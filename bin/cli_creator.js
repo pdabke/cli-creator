@@ -5,8 +5,9 @@ var fs = require("fs");
 var program = require("commander");
 var CLICreator = require("../src/index");
 
+program.name("cli-creator");
 program.command("create-config")
-  .description("Create a config file that maps Typescript classes/interfaces to CLI commands.")
+  .description("Create a config file that maps Typescript types to CLI commands.")
   .argument("[package]", "Name or root directory of a package")
   .argument("[type]", "Class or interface that specifies signatures for CLI commands.")
   .option("-n, --name <cli-name>", "Command/prompt name of the CLI")

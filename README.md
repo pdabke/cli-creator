@@ -9,7 +9,7 @@ npm i [-g] @nabh/cli-creator
 If you install `cli-extractor` globally, you can use `cli-extractor` CLI to create configuration files needed to convert your Typescript classes/interfaces into a CLI
 ```shell
 > cli-creator --help
-Usage: cli_creator [options] [command]
+Usage: cli-creator [options] [command]
 
 Options:
   -h, --help                                display help for command
@@ -20,7 +20,7 @@ Commands:
 ```
 ```
 > cli-creator create-config --help
-Usage: cli_creator create-config [options] [package] [type]
+Usage: cli-creator create-config [options] [package] [type]
 
 Create a config file that maps Typescript classes/interfaces to CLI commands.
 
