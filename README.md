@@ -49,7 +49,8 @@ export class PizzaShop {
    * @param options - Order options
    * @returns Order object
    */
-  placeOrder(customerName: string, pizzaType: pizzatype, quantity: number = 1, options?: OrderOptions): Order {
+  placeOrder(customerName: string, pizzaType: pizzatype, quantity: number = 1, 
+    options?: OrderOptions): Order {
     /* Implementation code here */
   }
 
