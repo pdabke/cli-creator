@@ -5,13 +5,40 @@ const { Command, Option } = require("commander");
 const CLIModule = require("./cli_module");
 const createModuleConfig = require("../src/create_module_config");
 
+/**
+ * Utility to transform Typescript classes and interfaces into CLI commands
+ */
 const CLICreator = {
+  /**
+   * Create configuration file needed by cli-creator to map Typescript types to CLI commands
+   * 
+   * @param {string} pkgNameOrPath Name of the Typescript package or path to the root package directoy
+   * @param {string} providerType Class or interface name that implements CLI commands
+   * @param {object} options Available options specified as properties of the options object:
+   * @param [options.name] {string} Name of the prompt/script for the CLI
+   * @param [options.versionString] {string} - Version string to be printed when client uses -v or --version option on CLI
+   * @param [options.save] {string} Path to the file where the generated file is to be saved. If omitted, the method will print 
+   * the generated file to the console
+   * @returns Configuration object used to generate CLI
+   */
   createModuleConfig(pkgNameOrPath, providerType, options) {
     let config = createModuleConfig(pkgNameOrPath, providerType, options);
     if (options?.save) fs.writeFileSync(options.save, JSON.stringify(config, null, 2));
     return config;
   },
 
+  /**
+   * Create mapping configuration for CLI that can invoke commands on multiple modules corresponding to different Typescript objects
+   * @param {object} moduleSpecs {name: <name>, version: <version-string>, modules: [{package: <pkg>, type: <class-or-interface-name>}]}
+   * @param [moduleSpec.name] {string} Name/prompt for the CLI
+   * @param [moduleSpec.version] {string} Version string to be displayed when CLI is invoked with -v or --version option
+   * @param [moduleSpec.modules] {array} Array of objects that specify package name and class/interface for that module
+   * @param {object} options Available options specified as properties of the options object:
+   * @param [options.name] {string} Name of the prompt/script for the CLI
+   * @param [options.versionString] {string} - Version string to be printed when client uses -v or --version option on CLI
+   * @param [options.save] {string} Path to the file where the generated file is to be saved. If omitted, the method will print 
+   * @returns Configuration object to be used by a multi-module CLI
+   */
   createMultiModuleConfig(moduleSpecs, options) {
     let mmConfig = {name: moduleSpecs.name, version: moduleSpecs.version};
     if (options?.name) mmConfig.name = options.name;
@@ -27,6 +54,17 @@ const CLICreator = {
     return mmConfig;
   },
 
+  /**
+   * 
+   * @param {object} config Typescript types to commands mapping configuration
+   * @param {object} providerFactory Factory class that can create instances of Objects that implement CLI commands
+   * @param {object} factoryOptions Default option values supplied to the object factory. For example:
+   * {scope: "world"}
+   * @param {array} optionsSpec CLI global command line options spec. Passed through unchanged to commander. 
+   * For example: [["-s, --scope <scope>", "Scope, either world or universe"]]
+   * @param {boolean} apiMode true if you will be programmatically executing CLI commands. False by default.
+   * @returns CLI object. Use "run" method for traditional CLI usage. Use "executeCommand" method for single command execution
+   */
   async createSingleModuleCLI(config, providerFactory, factoryOptions, optionsSpec, apiMode) {
     let cli = new SingleModuleCLI(config, providerFactory, factoryOptions, optionsSpec);
     if (apiMode) {
@@ -36,8 +74,19 @@ const CLICreator = {
     return cli;
   },
 
-  async createMultiModuleCLI(multiConfig, providerFactory, factoryOptions, optionsSpec, apiMode) {
-    let cli = new MultiModuleCLI(multiConfig, providerFactory, factoryOptions, optionsSpec);
+  /**
+   * 
+   * @param {object} config 
+   * @param {object} providerFactory Factory class that can create instances of Objects that implement CLI commands
+   * @param {object} factoryOptions Default option values supplied to the object factory. For example:
+   * {scope: "world"}
+   * @param {array} optionsSpec CLI global command line options spec. Passed through unchanged to commander. 
+   * For example: [["-s, --scope <scope>", "Scope, either world or universe"]]
+   * @param {boolean} apiMode true if you will be programmatically executing CLI commands. False by default.
+   * @returns CLI object. Use "run" method for traditional CLI usage. Use "executeCommand" method for single command execution
+   */
+  async createMultiModuleCLI(config, providerFactory, factoryOptions, optionsSpec, apiMode) {
+    let cli = new MultiModuleCLI(config, providerFactory, factoryOptions, optionsSpec);
     if (apiMode) {
       cli.setSilent(true);    
     }

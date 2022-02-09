@@ -151,3 +151,162 @@ pizza-shop> list-orders
   }
 ]
 pizza-shop>
+```
+## Creating CLI for multiple Typescript Objects
+The previous example walked through the creation of a CLI that enables invoking methods on an instance of a single Typescript class or an interface. It is also possible to create a CLI that has multiple modules corresponding to different Typescript classes/interfaces. For example, let's say that you want to create a CLI corresponding to two Typescript types: `IHello` interface in package `hello`, and `PizzaShop` class in package `pizza-shop`. The first step in creating a `multi-module` CLI is to create an input file that specify target Typescript types. For the current example, the input file will look like the one shown below.
+```json
+{
+  "name": "cli-creator-test",
+  "version": "2.0.0",
+  "modules": [
+    {
+      "package": "hello",
+      "type": "IHello"
+    },
+    {
+      "package": "pizza-shop",
+      "type": "PizzaShop"
+    }
+  ]
+}
+```
+The next step is to create the config file for the target CLI by using `cli-creator` command.
+```shell
+> cli-creator create-config -i cli-input.json -s cli-config.json
+```
+The last step is to create the main file for the CLI as shown below.
+```javascript
+const path = require("path");
+const CLICreator = require("@nabh/cli-creator");
+const { TestFactory } = require("pizza-shop");
+
+var MULTI_MODULE_CONFIG = require("./cli-config.json");
+
+async function run() {
+  var cli = await CLICreator.createMultiModuleCLI(MULTI_MODULE_CONFIG, TestFactory, {scope: "world"}, 
+    [["-s, --scope <scope>", "Scope, either world or universe"]]);
+  await cli.run();
+}
+run();
+```
+You can test the CLI by running the main file.
+```shell
+> node main.js
+cli-creator-test> help
+Usage: cli-creator-test [options] <module-command>
+
+Arguments:
+  module-command       Module command. If omitted, the program will run in interactive mode.
+
+Options:
+  -s, --scope <scope>  Scope, either world or universe
+  -h, --help           display help for command
+
+Available Modules:
+  i-hello
+  pizza-shop
+Type <module-name> --help for module-specific help.
+
+cli-creator-test> i-hello say-hello
+"Hello World"
+cli-creator-test> pizza-shop place-order bob cheese
+{
+  "status": "placed",  
+  "id": 0,
+  "customerName": "bob"
+}
+```
+## Using an object factor to create provider instances
+`cli-creator` needs to create an instance of Typescript class that executes CLI commands. By default, `cli-creator` tries to create an instance of the targeted class by using its no-args constructor. However, this is not possible if the target type is an interface. It is also possible that the class does not have a no-args constructor. In such cases, `cli-creator` allows you to pass in a `factory` class that can create the required instances. The factory class object and default configuration parameters can be passed to `createSingleModuleCLI` and `createMultiModuleCLI` methods on the `CLICreator` object. The factory class is expected to have a static `create` method that accepts an options object as its first argument. You can optionally process a second argument that provides the name of the module for which the instance to be created. In the example in the previous section, we passed in a `TestFactory` class and specified the default option variable `scope` to have value `world`. A sample implementation of `TestFactory` class is given below.
+```typescript
+export class TestFactory {
+  static create(opts, moduleName) {
+    if (moduleName == "i-hello") {
+      if (opts?.scope == "world") return new HelloWorld();
+      else return new HelloUniverse();
+    } else {
+      return new PizzaShop();
+    }
+  }
+}
+```
+## CLI initialization options
+Notice that the `TestFactor` creates instance of a different class depending on the value of an option named `scope`. In our example, we passed that as an argument to the `createMultiModuleCLI` call. It is also possible to let the CLI invoker to control such options on the command line, just include an array of option specifications as the fourth argument. `cli-creator` uses the `commander` package for the CLI implementation and the option specification array is passed through to the `option` method call on the `command` object.
+
+<a name="CLICreator"></a>
+
+## API Reference
+Utility to transform Typescript classes and interfaces into CLI commands
+
+**Kind**: global constant  
+
+* [CLICreator](#CLICreator)
+    * [.createModuleConfig(pkgNameOrPath, providerType, options)](#CLICreator.createModuleConfig) ⇒
+    * [.createMultiModuleConfig(moduleSpecs, options)](#CLICreator.createMultiModuleConfig) ⇒
+    * [.createSingleModuleCLI(config, providerFactory, factoryOptions, optionsSpec, apiMode)](#CLICreator.createSingleModuleCLI) ⇒
+    * [.createMultiModuleCLI(config, providerFactory, factoryOptions, optionsSpec, apiMode)](#CLICreator.createMultiModuleCLI) ⇒
+
+<a name="CLICreator.createModuleConfig"></a>
+
+### CLICreator.createModuleConfig(pkgNameOrPath, providerType, options) ⇒
+Create configuration file needed by cli-creator to map Typescript types to CLI commands
+
+**Kind**: static method of [<code>CLICreator</code>](#CLICreator)  
+**Returns**: Configuration object used to generate CLI  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| pkgNameOrPath | <code>string</code> | Name of the Typescript package or path to the root package directoy |
+| providerType | <code>string</code> | Class or interface name that implements CLI commands |
+| options | <code>object</code> | Available options specified as properties of the options object: |
+| [options.name] | <code>string</code> | Name of the prompt/script for the CLI |
+| [options.versionString] | <code>string</code> | Version string to be printed when client uses -v or --version option on CLI |
+| [options.save] | <code>string</code> | Path to the file where the generated file is to be saved. If omitted, the method will print  the generated file to the console |
+
+<a name="CLICreator.createMultiModuleConfig"></a>
+
+### CLICreator.createMultiModuleConfig(moduleSpecs, options) ⇒
+Create mapping configuration for CLI that can invoke commands on multiple modules corresponding to different Typescript objects
+
+**Kind**: static method of [<code>CLICreator</code>](#CLICreator)  
+**Returns**: Configuration object to be used by a multi-module CLI  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleSpecs | <code>object</code> | {name: <name>, version: <version-string>, modules: [{package: <pkg>, type: <class-or-interface-name>}]} |
+| [moduleSpec.name] | <code>string</code> | Name/prompt for the CLI |
+| [moduleSpec.version] | <code>string</code> | Version string to be displayed when CLI is invoked with -v or --version option |
+| [moduleSpec.modules] | <code>array</code> | Array of objects that specify package name and class/interface for that module |
+| options | <code>object</code> | Available options specified as properties of the options object: |
+| [options.name] | <code>string</code> | Name of the prompt/script for the CLI |
+| [options.versionString] | <code>string</code> | Version string to be printed when client uses -v or --version option on CLI |
+| [options.save] | <code>string</code> | Path to the file where the generated file is to be saved. If omitted, the method will print |
+
+<a name="CLICreator.createSingleModuleCLI"></a>
+
+### CLICreator.createSingleModuleCLI(config, providerFactory, factoryOptions, optionsSpec, apiMode) ⇒
+**Kind**: static method of [<code>CLICreator</code>](#CLICreator)  
+**Returns**: CLI object. Use "run" method for traditional CLI usage. Use "executeCommand" method for single command execution  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| config | <code>object</code> | Typescript types to commands mapping configuration |
+| providerFactory | <code>object</code> | Factory class that can create instances of Objects that implement CLI commands |
+| factoryOptions | <code>object</code> | Default option values supplied to the object factory. For example: {scope: "world"} |
+| optionsSpec | <code>array</code> | CLI global command line options spec. Passed through unchanged to commander.  For example: [["-s, --scope <scope>", "Scope, either world or universe"]] |
+| apiMode | <code>boolean</code> | true if you will be programmatically executing CLI commands. False by default. |
+
+<a name="CLICreator.createMultiModuleCLI"></a>
+
+### CLICreator.createMultiModuleCLI(config, providerFactory, factoryOptions, optionsSpec, apiMode) ⇒
+**Kind**: static method of [<code>CLICreator</code>](#CLICreator)  
+**Returns**: CLI object. Use "run" method for traditional CLI usage. Use "executeCommand" method for single command execution  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| config | <code>object</code> |  |
+| providerFactory | <code>object</code> | Factory class that can create instances of Objects that implement CLI commands |
+| factoryOptions | <code>object</code> | Default option values supplied to the object factory. For example: {scope: "world"} |
+| optionsSpec | <code>array</code> | CLI global command line options spec. Passed through unchanged to commander.  For example: [["-s, --scope <scope>", "Scope, either world or universe"]] |
+| apiMode | <code>boolean</code> | true if you will be programmatically executing CLI commands. False by default. |
+

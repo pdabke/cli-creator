@@ -8,7 +8,8 @@
   },
   "scripts": {
     "lint": "npx eslint --fix src/**",
-    "test": "jest"
+    "test": "jest",
+    "doc": "jsdoc2md src/index.js > REFERENCE.md"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,8 @@
   "homepage": "https://github.com/pdabke/cli-generator#readme",
   "devDependencies": {
     "eslint": "^8.8.0",
-    "jest": "^27.4.7"
+    "jest": "^27.4.7",
+    "jsdoc-to-markdown": "^7.1.1"
   },
   "dependencies": {
     "@nabh/ts-api-extractor": "^1.1.4",
