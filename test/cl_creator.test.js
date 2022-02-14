@@ -1,7 +1,7 @@
-"use strict"
+"use strict";
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require('child_process')
+const { execSync } = require("child_process");
 const CLICreator = require("../src/index.js");
 
 const BASE_CONFIG = JSON.parse(fs.readFileSync(path.resolve(__dirname, "base_config.json")));
@@ -33,17 +33,17 @@ test("Module config creation", () => {
 
 test("Single module CLI: Happy path with provider factory", async () => {
   var cli = await CLICreator.createSingleModuleCLI(BASE_CONFIG, require("./base")["HelloFactory"], {scope: "universe"}, null, true);
-  let resp = await cli.executeCommand("say-hello")
+  let resp = await cli.executeCommand("say-hello");
   expect(resp.response).toEqual("Hello Universe");
 
   cli = await CLICreator.createSingleModuleCLI(BASE_CONFIG, require("./base")["HelloFactory"], {scope: "world"}, null, true);
-  resp = await cli.executeCommand("say-hello")
+  resp = await cli.executeCommand("say-hello");
   expect(resp.response).toEqual("Hello World");
 });
 
 test("Single module CLI: Happy path without provider factory", async () => {
   var cli = await CLICreator.createSingleModuleCLI(TEST_CONFIG, null, null, null, true);
-  let resp = await cli.executeCommand("list-orders")
+  let resp = await cli.executeCommand("list-orders");
   expect(resp.response).toEqual([]);
   resp = await cli.executeCommand("place-order -o dine-in -t -e bob@example.com -n bob -p 12345 bob cheese 1");
   expect(resp).toEqual({ "status": 0, "response": { "status": "placed", "id": 0, "customerName": "bob" } });
@@ -60,7 +60,7 @@ test("Single module CLI: Invalid commands", async () => {
 
 test("Multi module CLI: Happy path with provider factory", async () => {
   var cli = await CLICreator.createMultiModuleCLI(MULTI_MODULE_CONFIG, require("./pizza_shop")["TestFactory"], {scope: "world"}, null, true);
-  let resp = await cli.executeCommand("i-hello say-hello")
+  let resp = await cli.executeCommand("i-hello say-hello");
   expect(resp.response).toEqual("Hello World");
   resp = await cli.executeCommand("pizza-shop place-order -o dine-in -t -e bob@example.com -n bob -p 12345 bob cheese 1");
   expect(resp).toEqual({ "status": 0, "response": { "status": "placed", "id": 0, "customerName": "bob" } });
@@ -69,7 +69,7 @@ test("Multi module CLI: Happy path with provider factory", async () => {
 
 test("Multi module CLI: Happy path without provider factory", async () => {
   var cli = await CLICreator.createMultiModuleCLI(MULTI_MODULE_CONFIG, null, null, null, true);
-  let resp = await cli.executeCommand("pizza-shop list-orders")
+  let resp = await cli.executeCommand("pizza-shop list-orders");
   expect(resp.response).toEqual([]);
   resp = await cli.executeCommand("pizza-shop place-order -o dine-in -t -e bob@example.com -n bob -p 12345 bob cheese 1");
   expect(resp).toEqual({ "status": 0, "response": { "status": "placed", "id": 0, "customerName": "bob" } });

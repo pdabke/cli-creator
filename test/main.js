@@ -6,7 +6,7 @@ var provider = "PizzaShop";
 var cli = CLICreator.createSingletonInterface(name, pkg, provider);
 */
 const CLICreator = require("../src/index.js");
-CLICreator.createModuleConfig("./base", "IHello", { out: "base_config.json"})
+CLICreator.createModuleConfig("./base", "IHello", { out: "base_config.json"});
 var config = CLICreator.createModuleConfig("./pizza_shop", "PizzaShop", { out: "test_config.json"});
 var cli = CLICreator.createSingleModuleCLI(config);
 cli.run();

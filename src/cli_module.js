@@ -164,7 +164,7 @@ class CLIModule {
           // Push options
           let opts = args[args.length - 2];
           Object.keys(opts).forEach((key) => {
-            opts[key] = optFuncs[key]["func"](opts[key], optFuncs[key]["name"])
+            opts[key] = optFuncs[key]["func"](opts[key], optFuncs[key]["name"]);
           });
           typedCmdArgs.push(args[args.length-2]);
           if (cInfo.isAsync) response = await provider[cInfo.name](...typedCmdArgs);
