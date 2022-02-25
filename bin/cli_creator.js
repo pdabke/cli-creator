@@ -29,22 +29,36 @@ program.command("create-config")
       config = CLICreator.createModuleConfig(pkg, type, options);
     } else {
       if (!options?.input) {
-        console.log("You must specify either package/type or input specification file")
+        console.log("You must specify either package/type or input specification file");
+        return;
+      }
+      let inputFile = undefined;
+      try {
+        inputFile = fs.readFileSync(options.input)
+      } catch (e) {
+        console.log("Input config file does not exist or cannot be read.");
+        return;
+      }
+      let moduleSpec = undefined;
+      try {
+        moduleSpec = JSON.parse(inputFile);
+      } catch (e) {
+        console.log("Input config file does not contain valid JSON");
+        return;
       }
       try {
-        let moduleSpec = JSON.parse(fs.readFileSync(options.input));
         if (!moduleSpec.modules || moduleSpec.modules.length == 0) {
           console.log("You must define atleast one module.");
           return;
         }
         if (!options) options = {};
-        if (moduleSpec.modules.length == 1) {
+        if (moduleSpec.modules) {
+          config = CLICreator.createMultiModuleConfig(moduleSpec, options);
+        } else {
           // Single module CLI
           if (!options?.name) if (moduleSpec.name) options.name = moduleSpec.name;
           if (!options?.versionString) if (moduleSpec.version) options.versionString = moduleSpec.version;
-          config = CLICreator.createModuleConfig(moduleSpec.modules["package"], moduleSpec.modules["type"], options);
-        } else {
-          config = CLICreator.createMultiModuleConfig(moduleSpec, options);
+          config = CLICreator.createModuleConfig(moduleSpec["package"], moduleSpec["type"], options);
         }
       } catch (e) {
         console.log("Invalid input file path of content.");

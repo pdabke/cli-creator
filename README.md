@@ -217,7 +217,7 @@ cli-creator-test> pizza-shop place-order bob cheese
   "customerName": "bob"
 }
 ```
-## Using an object factor to create provider instances
+## Using an object factory to create provider instances
 `cli-creator` needs to create an instance of Typescript class that executes CLI commands. By default, `cli-creator` tries to create an instance of the targeted class by using its no-args constructor. However, this is not possible if the target type is an interface. It is also possible that the class does not have a no-args constructor. In such cases, `cli-creator` allows you to pass in a `factory` class that can create the required instances. The factory class object and default configuration parameters can be passed to `createSingleModuleCLI` and `createMultiModuleCLI` methods on the `CLICreator` object. The factory class is expected to have a static `create` method that accepts an options object as its first argument. You can optionally process a second argument that provides the name of the module for which the instance to be created. In the example in the previous section, we passed in a `TestFactory` class and specified the default option variable `scope` to have value `world`. A sample implementation of `TestFactory` class is given below.
 ```typescript
 export class TestFactory {
