@@ -40,7 +40,7 @@ const CLICreator = {
    * @returns Configuration object to be used by a multi-module CLI
    */
   createMultiModuleConfig(moduleSpecs, options) {
-    let mmConfig = {name: moduleSpecs.name, version: moduleSpecs.version};
+    let mmConfig = { name: moduleSpecs.name, version: moduleSpecs.version };
     if (options?.name) mmConfig.name = options.name;
     if (options?.versionString) mmConfig.version = options.versionString;
     let configs = [];
@@ -69,7 +69,7 @@ const CLICreator = {
     let cli = new SingleModuleCLI(config, providerFactory, factoryOptions, optionsSpec);
     if (apiMode) {
       await cli.init();
-      cli.setSilent(true);    
+      cli.setSilent(true);
     }
     return cli;
   },
@@ -88,7 +88,7 @@ const CLICreator = {
   async createMultiModuleCLI(config, providerFactory, factoryOptions, optionsSpec, apiMode) {
     let cli = new MultiModuleCLI(config, providerFactory, factoryOptions, optionsSpec);
     if (apiMode) {
-      cli.setSilent(true);    
+      cli.setSilent(true);
     }
     return cli;
   }
@@ -216,9 +216,13 @@ class MultiModuleCLI extends SingleModuleCLI {
     if (!cliModule) {
       try {
         let modConfig = this.moduleMap[argv[0]];
-        if (!modConfig) return { status: 1, 
-          error: { code: "module.not_configured", message: "Module " + argv[0] + 
-          " has not been configured."}};
+        if (!modConfig) return {
+          status: 1,
+          error: {
+            code: "module.not_configured", message: "Module " + argv[0] +
+              " has not been configured."
+          }
+        };
         cliModule = await this.createCLIModule(modConfig, modConfig.name, this.name);
         cliModule.setSilent(this.silent);
         this.modules[argv[0]] = cliModule;
@@ -251,7 +255,7 @@ class MultiModuleCLI extends SingleModuleCLI {
 }
 
 function extractOptions(argv, module) {
-  let metaOptions = {help: true, "--help": true, "-h": true, "--version": true, "-v": true};
+  let metaOptions = { help: true, "--help": true, "-h": true, "--version": true, "-v": true };
   let optPlus = { startIndex: 2 };
   let opts = {};
   optPlus.options = opts;
@@ -265,8 +269,8 @@ function extractOptions(argv, module) {
       return optPlus;
     }
     if (option.required) {
-      if (i+1 == argv.length) throw new Error("You must specify value for option " + argv[i]);
-      opts[option.attributeName()] = argv[i+1];
+      if (i + 1 == argv.length) throw new Error("You must specify value for option " + argv[i]);
+      opts[option.attributeName()] = argv[i + 1];
       i++;
     } else {
       opts[option.attributeName()] = true;

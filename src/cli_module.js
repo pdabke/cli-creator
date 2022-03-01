@@ -122,7 +122,7 @@ class CLIModule {
 
       if (e.exitCode == 0) setResponse(undefined);
       else setError(e);
-      
+
       return COMMAND_RESPONSE;
     }
   }
@@ -139,16 +139,21 @@ class CLIModule {
         let optStrs = constructOptionFlags(cInfo.options);
         optFuncs = addOptions(cmd, cInfo.options, optStrs);
       }
-      
+
       // Need to use an intermediate function to ensure correct "this"
       // value when we call the actual method on the provider object
       cmd.action(async (...args) => {
-        // Remove command arg
-        
+
+        // Commander was designed to execute one command and exit. Here we
+        // support an interactive mode and unfortunately some state has to
+        // be reset in the Command object when it is reused.
+        args[args.length - 1]._optionValueSources = {};
+        args[args.length - 1]._optionValues = {};
+
         let response = undefined;
         let typedCmdArgs = [];
         try {
-          for (let i=0; i<argFuncs.length; i++) {
+          for (let i = 0; i < argFuncs.length; i++) {
             if (args[i] === undefined) {
               typedCmdArgs.push(undefined);
               continue;
@@ -166,7 +171,7 @@ class CLIModule {
           Object.keys(opts).forEach((key) => {
             opts[key] = optFuncs[key]["func"](opts[key], optFuncs[key]["name"]);
           });
-          typedCmdArgs.push(args[args.length-2]);
+          typedCmdArgs.push(args[args.length - 2]);
           if (cInfo.isAsync) response = await provider[cInfo.name](...typedCmdArgs);
           else response = provider[cInfo.name](...typedCmdArgs);
           this.printResult(JSON.stringify(response, null, 2));
@@ -183,7 +188,7 @@ class CLIModule {
             } catch (e1) {
               if (e1.message) this.printResult(e1.message);
               else this.printResult(e1);
-              setError(e1);    
+              setError(e1);
             }
           } else {
             if (e.message) this.printResult(e.message);
@@ -201,9 +206,9 @@ class CLIModule {
       // When silent mode is true, override console output functions
       // with no-op functions
       this.program.configureOutput({
-        writeOut: () => {},
-        writeErr: () => {},
-        outputError: () => {}
+        writeOut: () => { },
+        writeErr: () => { },
+        outputError: () => { }
       });
     } else {
       this.program.configureOutput({
@@ -213,7 +218,7 @@ class CLIModule {
       });
     }
   }
-  
+
   printResult(message) {
     if (this.notSilent) console.log(message);
   }
@@ -267,7 +272,7 @@ function addOptions(cmd, opts, optFlags) {
     // arg.argParser(argFunc);
 
     cmd.addOption(arg);
-    argFuncs[arg.attributeName()] = { name: optFlags[i], func: argFunc};
+    argFuncs[arg.attributeName()] = { name: optFlags[i], func: argFunc };
   }
   return argFuncs;
 }
