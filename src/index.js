@@ -216,16 +216,19 @@ class MultiModuleCLI extends SingleModuleCLI {
     if (!cliModule) {
       try {
         let modConfig = this.moduleMap[argv[0]];
-        if (!modConfig) return {
-          status: 1,
-          error: {
-            code: "module.not_configured", message: "Module " + argv[0] +
-              " has not been configured."
-          }
-        };
+        if (!modConfig) {
+          if (!this.silent) console.log("Could not find module " + argv[0]);
+          return {
+            status: 1,
+            error: {
+              code: "module.not_found", message: "Could not find module " + argv[0]
+            }
+          };
+        }
         cliModule = await this.createCLIModule(modConfig, modConfig.name, this.name);
         cliModule.setSilent(this.silent);
         this.modules[argv[0]] = cliModule;
+
       } catch (e) {
         return { status: 1, error: e };
       }
