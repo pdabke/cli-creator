@@ -100,7 +100,7 @@ class SingleModuleCLI {
     this.config = config;
     this.providerFactory = providerFactory;
     this.factoryOptions = factoryOptions ? factoryOptions : {};
-    this.interactive = true;
+    this.interactive = false;
     this.optionSpecs = optionSpecs;
 
     this.optionFlags = {};
@@ -116,18 +116,18 @@ class SingleModuleCLI {
     }
   }
 
-  async init() {
-    this.cliModule = await this.createCLIModule(this.config);
+  async init(hideParentCommandName) {
+    this.cliModule = await this.createCLIModule(this.config, undefined, undefined, hideParentCommandName);
     this.name = this.cliModule.name;
   }
 
-  async createCLIModule(config, moduleName, programName) {
+  async createCLIModule(config, moduleName, programName, hideParentCommandName) {
     let provider = undefined;
     if (this.providerFactory) {
       let opts = this.factoryOptions ? this.factoryOptions : {};
       provider = await this.providerFactory.create(opts, moduleName);
     }
-    return new CLIModule(config, provider, this.optionSpecs, programName);
+    return new CLIModule(config, provider, this.optionSpecs, programName, hideParentCommandName);
   }
 
   setSilent(flag) {
@@ -150,9 +150,8 @@ class SingleModuleCLI {
     try {
       let optPlus = extractOptions(process.argv, this);
       if (optPlus.options) Object.assign(this.factoryOptions, optPlus.options);
-      await this.init();
+      await this.init(!optPlus.execAndExit);
       if (optPlus.execAndExit) {
-        this.interactive = false;
         await this.exec(process.argv.slice(optPlus.startIndex));
       } else {
         await this.interact();
@@ -225,7 +224,7 @@ class MultiModuleCLI extends SingleModuleCLI {
             }
           };
         }
-        cliModule = await this.createCLIModule(modConfig, modConfig.name, this.name);
+        cliModule = await this.createCLIModule(modConfig, modConfig.name, this.interactive ? "" : this.name);
         cliModule.setSilent(this.silent);
         this.modules[argv[0]] = cliModule;
 
@@ -245,7 +244,7 @@ class MultiModuleCLI extends SingleModuleCLI {
     console.log("");
     console.log("Available Modules:");
     for (const mod of this.moduleList) {
-      console.log("  " + mod);
+      console.log("  " + mod + (this.moduleMap[mod].comment ? "\t" + this.moduleMap[mod].comment : ""));
     }
     let moreHelp = this.interactive ? "Type <module-name> --help for module-specific help." :
       "Type " + this.name + " <module-name> --help for module-specific help.";

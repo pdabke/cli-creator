@@ -9,10 +9,36 @@
       "providerType": "IHello",
       "methods": [
         {
+          "name": "echoBuffer",
+          "isAsync": true,
+          "comment": "Prints content from a buffer",
+          "params": [
+            {
+              "name": "buf",
+              "comment": "Content buffer",
+              "type": "Buffer"
+            }
+          ]
+        },
+        {
+          "name": "echoReadable",
+          "isAsync": true,
+          "comment": "Prints content from a readable stream",
+          "params": [
+            {
+              "name": "str",
+              "comment": "Readable stream",
+              "type": "Readable"
+            }
+          ]
+        },
+        {
           "name": "sayHello",
+          "comment": "Says hello",
           "params": []
         }
-      ]
+      ],
+      "comment": "Simple test interface for cli-creator"
     },
     {
       "name": "pizza-shop",

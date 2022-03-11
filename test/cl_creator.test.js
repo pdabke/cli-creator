@@ -41,6 +41,13 @@ test("Single module CLI: Happy path with provider factory", async () => {
   expect(resp.response).toEqual("Hello World");
 });
 
+test("Single module CLI: Readable stream parameter", async () => {
+  var cli = await CLICreator.createSingleModuleCLI(BASE_CONFIG, require("./base")["HelloFactory"], {scope: "universe"}, null, true);
+  let file = path.resolve(__dirname, __filename);
+  let resp = await cli.executeCommand("echo-readable " + file);
+  expect(resp.response.toString()).toEqual(fs.readFileSync(file).toString());
+});
+
 test("Single module CLI: Happy path without provider factory", async () => {
   var cli = await CLICreator.createSingleModuleCLI(TEST_CONFIG, null, null, null, true);
   let resp = await cli.executeCommand("list-orders");
@@ -75,6 +82,12 @@ test("Multi module CLI: Happy path without provider factory", async () => {
   expect(resp).toEqual({ "status": 0, "response": { "status": "placed", "id": 0, "customerName": "bob" } });
 });
 
+test("Multi module CLI: Buffer parameter", async () => {
+  var cli = await CLICreator.createMultiModuleCLI(MULTI_MODULE_CONFIG, require("./pizza_shop")["TestFactory"], {scope: "world"}, null, true);
+  let file = path.resolve(__dirname, __filename);
+  let resp = await cli.executeCommand("i-hello echo-buffer " + file);
+  expect(resp.response.toString()).toEqual(fs.readFileSync(file).toString());
+});
 
 test("Multi module CLI: Invalid commands", async () => {
   var cli = await CLICreator.createMultiModuleCLI(MULTI_MODULE_CONFIG, null, null, null, true);
@@ -123,4 +136,3 @@ test("CLI-Creator global script: Single module", () => {
   let expected = JSON.parse(fs.readFileSync("cli_test_base.json"));
   expect(expected).toEqual(resp);
 });
-

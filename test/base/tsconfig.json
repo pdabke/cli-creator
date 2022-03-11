@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist/dist-cjs",
-    "removeComments": true,
+    "removeComments": false,
     "module": "commonjs",
     "incremental": true,
     "resolveJsonModule": true,

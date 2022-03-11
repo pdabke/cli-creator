@@ -1,4 +1,5 @@
 "use strict";
+const fs = require("fs");
 const process = require("process");
 const { Command, Argument, Option, InvalidArgumentError } = require("commander");
 
@@ -27,6 +28,33 @@ const ARG_PARSERS = {
     if (value === true || value === "true") return true;
     if (value === "false") return false;
     throw new InvalidArgumentError(name + " must be true or false");
+  },
+
+  "Readable": function (value) {
+    let cwd = process.cwd();
+    console.log(cwd);
+    if (!fs.existsSync(value)) throw new InvalidArgumentError("File " + value + " does not exist");
+    if (fs.statSync(value).isDirectory()) throw new InvalidArgumentError(value + " is a directory. Expecting file.");
+    var str = null;
+    try {
+      str = fs.createReadStream(value);
+    } catch (e) {
+      throw new InvalidArgumentError("Not a valid file path.");
+    }
+    return str;
+  },
+
+  "Buffer": function (value) {
+    if (!fs.existsSync(value)) throw new InvalidArgumentError("File " + value + " does not exist");
+    if (fs.statSync(value).isDirectory()) throw new InvalidArgumentError(value + " is a directory. Expecting file.");
+    var str = null;
+    try {
+      str = fs.readFileSync(value);
+    } catch (e) {
+      throw new InvalidArgumentError("Not a valid file path.");
+    }
+    if (!str) throw new InvalidArgumentError("Not a valid file path.");
+    return str;
   },
 
   "any": function (value, name) {
@@ -60,7 +88,7 @@ function setError(err) {
 }
 
 class CLIModule {
-  constructor(config, provider, optionSpecs, programName) {
+  constructor(config, provider, optionSpecs, programName, hideParentCommandName) {
     this.notSilent = true;
     if (provider) this.provider = provider;
     else {
@@ -102,8 +130,9 @@ class CLIModule {
     if (programName) programName = programName + " ";
     else programName = "";
     this.program.name(programName + config.name);
+
     if (config.comment) this.program.description(config.comment);
-    this.setupCommands(this.program, this.provider, config.methods);
+    this.setupCommands(this.program, this.provider, config.methods, hideParentCommandName);
     if (optionSpecs) {
       for (const opt of optionSpecs) this.program.option(...opt);
     }
@@ -127,7 +156,7 @@ class CLIModule {
     }
   }
 
-  setupCommands(program, provider, commandConfigs) {
+  setupCommands(program, provider, commandConfigs, hideParentCommandName) {
     for (const cInfo of commandConfigs) {
       let cmdStr = camelCaseToDash(cInfo.name); // constructCommandString(cInfo.method, cInfo.params);
       let cmd = program.command(cmdStr);
@@ -140,6 +169,9 @@ class CLIModule {
         optFuncs = addOptions(cmd, cInfo.options, optStrs);
       }
 
+      // The following is hack to show the right help message that shows or
+      // hides the program name
+      if (hideParentCommandName) cmd.parent = undefined;
       // Need to use an intermediate function to ensure correct "this"
       // value when we call the actual method on the provider object
       cmd.action(async (...args) => {
