@@ -1,6 +1,6 @@
 {
   "name": "@nabh/cli-creator",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Easily create Command Line Interface from Typescript classes and interfaces",
   "main": "src/index.js",
   "bin": {
@@ -26,13 +26,13 @@
   },
   "homepage": "https://github.com/pdabke/cli-generator#readme",
   "devDependencies": {
-    "eslint": "^8.8.0",
-    "jest": "^27.4.7",
+    "eslint": "^8.13.0",
+    "jest": "^27.5.1",
     "jsdoc-to-markdown": "^7.1.1"
   },
   "dependencies": {
-    "@nabh/ts-api-extractor": "^1.1.4",
-    "commander": "^8.3.0",
+    "@nabh/ts-api-extractor": "^1.2.5",
+    "commander": "^9.1.0",
     "readline-sync": "^1.4.10"
   }
 }
