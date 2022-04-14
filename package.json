@@ -1,6 +1,6 @@
 {
   "name": "@nabh/cli-creator",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Easily create Command Line Interface from Typescript classes and interfaces",
   "main": "src/index.js",
   "bin": {

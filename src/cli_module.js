@@ -31,8 +31,6 @@ const ARG_PARSERS = {
   },
 
   "Readable": function (value) {
-    let cwd = process.cwd();
-    console.log(cwd);
     if (!fs.existsSync(value)) throw new InvalidArgumentError("File " + value + " does not exist");
     if (fs.statSync(value).isDirectory()) throw new InvalidArgumentError(value + " is a directory. Expecting file.");
     var str = null;
