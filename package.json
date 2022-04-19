@@ -1,6 +1,6 @@
 {
   "name": "@nabh/cli-creator",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Easily create Command Line Interface from Typescript classes and interfaces",
   "main": "src/index.js",
   "bin": {
@@ -31,8 +31,8 @@
     "jsdoc-to-markdown": "^7.1.1"
   },
   "dependencies": {
-    "@nabh/ts-api-extractor": "^1.2.5",
-    "commander": "^9.1.0",
+    "@nabh/ts-api-extractor": "^1.2.6",
+    "commander": "^9.2.0",
     "readline-sync": "^1.4.10"
   }
 }
